@@ -17,9 +17,9 @@ test = LinearGradientDescent(x_set, y_set, 20)
 test.run()
 
 print('RUNNING LOGIT TEST')
-n_size = 10
+n_size = 100
 x_set = generate_normal_random_sets(n_size, 3)
-y_set = np.random.randint(2, size=n_size)
-test2 = LogisticGradientDescent(x_set, y_set, iterations=2000)
+y_set = np.random.binomial(1, .85, size=n_size)
+test2 = LogisticGradientDescent(x_set, y_set, iterations=500)
 print(y_set)
 test2.run()

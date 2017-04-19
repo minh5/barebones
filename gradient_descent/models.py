@@ -61,7 +61,7 @@ class LinearGradientDescent(GradientDescent):
 
 class LogisticGradientDescent(GradientDescent):
 
-    def __init__(self, x, y, iterations, alpha=0.3):
+    def __init__(self, x, y, iterations, alpha=0.5):
         self.set_of_x = x
         self.y = y
         self.iterations = iterations
@@ -73,8 +73,9 @@ class LogisticGradientDescent(GradientDescent):
         return 1 / (1 + math.exp(-x))
 
     @staticmethod
-    def make_binary_prediction(x):
-        return 1 if x > .5 else 0
+    def make_binary_prediction(prediction, observed):
+        binary = 1 if prediction > .5 else 0
+        return 1 if binary == observed else 0
 
     def get_derivative(self, x):
         return self.get_logistic_function(x)*(1-self.get_logistic_function(x))
@@ -96,7 +97,7 @@ class LogisticGradientDescent(GradientDescent):
             prediction = self.make_prediction(logit_value)
             self.set_of_coefficients = [self.update_coef(coef, observed, prediction, x) for coef, x in zip(self.set_of_coefficients, set_of_x)]
             squared_error = (prediction - observed)**2
-            binary_prediction = self.make_binary_prediction(prediction)
+            binary_prediction = self.make_binary_prediction(prediction, observed)
             if index == 0:
                 list_of_errors = [squared_error]
                 list_of_binary = [binary_prediction]

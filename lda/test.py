@@ -14,8 +14,8 @@ zeros = np.zeros(100)
 y_train_set = np.append(ones, zeros)
 
 
-x_test_set = np.random.normal(high_mean, 10)
-y_test_set = np.random.normal(low_mean, 10)
+x_test_set = np.random.normal(high_mean, size=10)
+y_test_set = np.random.normal(low_mean, size=10)
 x_test_set = np.append(x_test_set, y_test_set)
 ones = np.ones(10)
 zeros = np.zeros(10)

@@ -21,13 +21,17 @@ class LDA:
         for item in self.classes:
             subset = self.x[self.y == item]
             means[item] = sum(subset)/len(subset)
+        return means
 
     @property
     def class_prob(self):
         class_prob = dict()
         for item in self.classes:
+            # import pdb
+            # pdb.set_trace()
             subset = self.x[self.y == item]
-            class_prob[item] = len(subset)/len(subset)
+            class_prob[item] = sum(subset)/len(subset)
+        return class_prob
 
     @property
     def variance(self):
@@ -38,14 +42,14 @@ class LDA:
         return 1/(len(self.x) - len(self.classes)) * sum(squared_diff)
 
     def make_prediction(self, x):
-        assert x in self.classes
         predicted_value = dict()
         for item in self.classes:
             value = x * (self.class_mean[item]/self.variance) - \
                 (((self.class_mean[item])**2)/(2*self.variance)) + \
                 np.log(self.class_mean[item])
             predicted_value[item] = value
-        return max(predicted_value.iteritems(), key=operator.itemgetter(1))[0]
+            print('predicted value:', predicted_value)
+        return max(predicted_value.items(), key=operator.itemgetter(1))[0]
 
     def determine_accuracy(self, prediction, observed):
         return 1 if prediction == observed else 0
@@ -57,5 +61,7 @@ class LDA:
         accuracy_holder = []
         for x, y in zip(self.test_x, self.test_y):
             prediction = self.make_prediction(x)
+            match = self.determine_accuracy(prediction, y)
+            print('predicted:', prediction, 'y:', y, 'match:', match)
             accuracy_holder.append(self.determine_accuracy(prediction, y))
         print('accuracy:', self.calculate_accuracy(accuracy_holder))

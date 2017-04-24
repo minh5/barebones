@@ -27,8 +27,6 @@ class LDA:
     def class_prob(self):
         class_prob = dict()
         for item in self.classes:
-            # import pdb
-            # pdb.set_trace()
             subset = self.x[self.y == item]
             class_prob[item] = sum(subset)/len(subset)
         return class_prob

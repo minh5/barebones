@@ -18,19 +18,6 @@ class Cart:
         self.min_nodes = min_nodes
 
     @staticmethod
-    def get_split_points(col_set, y_set, value):
-        assert len(col_set) == len(y_set)
-        # import pdb
-        # pdb.set_trace()
-        left, right = np.empty(0), np.empty(0)
-        for x in range(len(col_set)):
-            if col_set[x] < value:
-                left = np.append(left, y_set[x])
-            else:
-                right = np.append(right, y_set[x])
-        return left, right
-
-    @staticmethod
     def calculate_split_gini(split_list):
         classes = set(split_list)
         gini_prep = []
@@ -39,27 +26,38 @@ class Cart:
             gini_prep.append(len(subset))
         return gini(*gini_prep)
 
-    def determine_best_split(self, x, y):
-        best_gini, best_value, groups = 1, 0, None
-        for column in range(x.shape[1]):
-            columns = x[0:, column]
-            for row in columns:
-                le, re = self.get_split_points(columns, self.y, row)
-                gini = sum([self.calculate_split_gini(le),
-                           self.calculate_split_gini(re)])
+    @staticmethod
+    def get_split_points(index, x_set, y_set, value):
+        left, right, y_left, y_right = np.empty(0), np.empty(0), np.empty(0), np.empty(0)
+        for row, y in zip(x_set, y_set):
+            if row[index] < value:
+                left = np.append(left, row)
+                y_left = np.append(y_left, y)
+            else:
+                right = np.append(right, row)
+                y_right = np.append(y_right, y)
+        return left, right, y_left, y_right
+
+    def determine_best_split(self, x_set, y_set):
+        col_index, best_gini, best_value, groups = None, 1, 0, None
+        for column in range(x_set.shape[1]):
+            for row in x_set:
+                l, r, y_l, y_r = self.get_split_points(column, x_set, y_set, row[column])
+                gini = sum([self.calculate_split_gini(y_l),
+                           self.calculate_split_gini(y_r)])
                 print('gini is:', gini)
                 if gini < best_gini:
-                    col, best_gini, best_value, groups = column, gini, row, [le, re]
-        return {'index': col, 'value': best_value, 'group': groups}
+                    col_index, best_gini, best_value, x_groups, y_groups = column, gini, row[column], [l, r], [y_l, y_r]
+        return {'col_index': col_index, 'value': best_value, 'x': x_groups, 'y': y_groups}
 
     @staticmethod
     def terminal_node_value(group):
         outcomes = set(group)
         return max(outcomes, key=list(outcomes).count)
 
-    def create_child_nodes(self, depth):
-        node = self.determine_best_split()
-        left, right = node['group']
+    def create_nodes(self, x, y, depth):
+        node = self.determine_best_split(x, y)
+        left, right = node['y'][0], node['y'][1]
         if not left or not right:
             node['left'] = node['right'] = self.to_terminal(left + right)
         if depth >= self.tree_depth:
@@ -68,13 +66,13 @@ class Cart:
         if len(left) <= self.min_size:
             node['left'] = self.to_terminal(left)
         else:
-            node['left'] = self.determine_best_split(left)
-            self.create_child_nodes(node['left'], depth+1)
+            node['left'] = self.determine_best_split(node['x'], node['y'])
+            self.create_child_nodes(node['x'], node['y'], depth+1)
         if len(right) <= self.min_size:
             node['right'] = self.to_terminal(right)
         else:
-            node['right'] = self.determine_best_split(left)
-            self.create_child_nodes(node['right'], depth+1)
+            node['right'] = self.determine_best_split(node['x'], node['y'])
+            self.create_child_nodes(node['x'], node['y'], depth+1)
 
     def create_tree(self):
         root = self.determine_best_split()

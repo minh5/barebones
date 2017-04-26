@@ -1,4 +1,5 @@
-import pdb
+import os
+import pickle
 
 import numpy as np
 from models import Cart
@@ -17,9 +18,20 @@ x_set = np.array([[2.771244718, 1.784783929],
 y_set = np.append(np.zeros(5), np.ones(5))
 test = Cart(x_set, y_set)
 
-try:
-    test.determine_best_split(test.x, test.y)
-except:
-    pdb.post_mortem()
+print('LARGE ARRAY')
 
-# test.determine_best_split(test.x, test.y)
+home = os.environ.get('HOME')
+os.chdir('%s/barebones/cart' % home)
+
+with open('large_array.pickle', 'rb') as input:
+    x = pickle.load(input)
+
+with open('large_y.pickle', 'rb') as input:
+    y = pickle.load(input)
+
+test = Cart(x, y)
+try:
+    test.create_tree()
+except:
+    import pdb
+    pdb.post_mortem()

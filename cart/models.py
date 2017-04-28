@@ -17,6 +17,7 @@ class Cart:
         self.y = y
         self.tree_depth = tree_depth
         self.min_nodes = min_nodes
+        self.tree = self.run()
 
     @staticmethod
     def calculate_split_gini(split_list):
@@ -40,21 +41,19 @@ class Cart:
         return left[1:], right[1:], y_left, y_right
 
     def determine_best_split(self, x_set, y_set):
-        col_index, best_gini, best_value, groups = None, 1, 0, None
+        col_index, best_gini, best_value, x_groups, y_groups = None, 1, 0, dict(), dict()
         for column in range(x_set.shape[1]):
             for row in x_set:
-                print(row)
                 l, r, y_l, y_r = self.get_split_points(column, x_set, y_set, row[column])
                 gini = sum([self.calculate_split_gini(y_l),
                            self.calculate_split_gini(y_r)])
-                print('gini is:', gini)
                 if gini < best_gini:
-                    x_groups, y_groups = dict(), dict()
                     x_groups['left'] = l
                     x_groups['right'] = r
                     y_groups['left'] = y_l
                     y_groups['right'] = y_r
                     col_index, best_gini, best_value = column, gini, row[column]
+                    print('best gini', best_gini)
         return {'col_index': col_index, 'value': best_value, 'x': x_groups, 'y': y_groups}
 
     @staticmethod
@@ -79,11 +78,21 @@ class Cart:
         else:
             node['right'] = self.determine_best_split(node['x']['right'], node['y']['right'])
             self.create_nodes(node['right'], depth+1)
+        return node
 
-    def create_tree(self):
-        root = self.determine_best_split(self.x, self.y)
-        tree = self.create_nodes(root, 1)
-        return root
+    def predict(self, node, input_value):
+        if input_value[self.tree['col_index']] < self.tree['value']:
+            if isinstance(self.tree['left'], dict):
+                return self.predict(node['left'], input_value)
+            else:
+                return node['left']
+        else:
+            if isinstance(self.tree['right'], dict):
+                return self.predict(node['right'], input_value)
+            else:
+                return node['right']
 
     def run(self):
-        pass
+        root = self.determine_best_split(self.x, self.y)
+        tree = self.create_nodes(root, 1)
+        return tree

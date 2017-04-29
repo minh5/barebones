@@ -81,13 +81,13 @@ class Cart:
         return node
 
     def predict(self, node, input_value):
-        if input_value[self.tree['col_index']] < self.tree['value']:
-            if isinstance(self.tree['left'], dict):
+        if input_value[node['col_index']] < node['value']:
+            if isinstance(node['left'], dict):
                 return self.predict(node['left'], input_value)
             else:
                 return node['left']
         else:
-            if isinstance(self.tree['right'], dict):
+            if isinstance(node['right'], dict):
                 return self.predict(node['right'], input_value)
             else:
                 return node['right']

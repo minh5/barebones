@@ -59,6 +59,35 @@ class LinearGradientDescent(GradientDescent):
             self.weight = self.update_coefficients(error, observed)
 
 
+class MultiVariateGradientDescent(GradientDescent):
+
+    def make_prediction(bias, x_values, coefficients):
+        return sum([x * c for x, c in zip(x_values, coefficients)]) + bias
+
+    @staticmethod
+    def update_bias(bias, alpha, error):
+        return bias - alpha * error
+
+    @staticmethod
+    def update_coefficients(coefficient, alpha, error, x):
+        return coefficient - alpha * error * x
+
+    def run(self, train_set, y_train, n_epochs):
+        coefficients = [0 for i in range(len(train_set))]
+        for e in range(n_epochs):
+            sum_errors = 0
+            for row, y in zip(train_set, y_train):
+                yhat = self.make_prediction(self.bias, row, coefficients)
+                error = (yhat - y)
+                sum_errors += error**2
+                self.bias = self.update(self.bias, self.alpha, error)
+                for i in range(row):
+                    coefficients[i] = self.update_coefficients(
+                        coefficients[i], self.alpha, error, row[i]
+                        )
+        return coefficients
+
+
 class LogisticGradientDescent(GradientDescent):
 
     def __init__(self, x, y, iterations, alpha=0.5):

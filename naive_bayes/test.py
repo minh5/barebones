@@ -19,7 +19,7 @@ y_train = np.array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
 
 test = NaiveBayes(x_train, y_train)
 try:
-    test.calculate_probs()
+    test.run()
 except BaseException:
     import pdb
     pdb.post_mortem()

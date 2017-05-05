@@ -24,6 +24,10 @@ class NaiveBayes:
             result.append((i - mean)**2)
         return (sum(result)/(len(result)-1))**(1/2)
 
+    @staticmethod
+    def calculate_accuracy(prediction, observed):
+        return 1 if prediction == observed else 0
+
     def class_summary(self, data):
         return [(self.mean(column), self.std_dev(column), len(column)) for column in zip(*data)]
 
@@ -52,3 +56,12 @@ class NaiveBayes:
 
     def predict(self, probs_dict):
         return max(probs_dict.items(), key=operator.itemgetter(1))[0]
+
+    def run(self):
+        summary = self.get_class_summary()
+        correct_prediction = 0
+        for x, y in zip(self.x_train, self.y_train):
+            probs = self.calculate_probs(x, summary)
+            prediction = self.predict(probs)
+            correct_prediction += self.calculate_accuracy(prediction, y)
+            print('current accuracy:', correct_prediction/(self.x_train.shape[0]))

@@ -17,5 +17,5 @@ x = np.array([
  ])
 y = np.array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
 
-test = KNN(x, y)
+test = KNN(x, y, x[9])
 test.run()

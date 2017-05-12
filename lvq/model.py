@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 
+
 class LVQ:
 
     def __init__(
@@ -20,7 +21,7 @@ class LVQ:
         distance = 0
         for fi, sec in zip(first, second):
             distance += (fi - sec)**2
-        return distance**(1/2)
+        return distance**(1 / 2)
 
     def get_bmu(self, codebook, test_row):
         distances = list()
@@ -43,7 +44,7 @@ class LVQ:
         return np.array(codebook_x), np.array(codebook_y)
 
     def linear_decay(self, epoch, total_epoch):
-        return self.learning_rate * (1 - (epoch/total_epoch))
+        return self.learning_rate * (1 - (epoch / total_epoch))
 
     def run(self):
         codebook_x, codebook_y = self.initialize_codebook()

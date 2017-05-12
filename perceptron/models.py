@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Perceptron:
 
     def __init__(
@@ -30,6 +31,7 @@ class Perceptron:
                 self.bias = self.bias + self.learning_rate * error
                 for i in range(len(x)):
                     weights[i] = weights[i] + self.learning_rate * error * x[i]
-                    print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, self.learning_rate, sum_error))
+                    print('>epoch=%d, lrate=%.3f, error=%.3f' %
+                          (epoch, self.learning_rate, sum_error))
         print('weight:', weights)
         return weights

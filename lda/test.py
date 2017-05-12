@@ -1,4 +1,3 @@
-import pdb
 import numpy as np
 
 from models import LDA
@@ -26,4 +25,5 @@ test = LDA(x_train_set, y_train_set, x_test_set, y_test_set)
 try:
     test.run()
 except:
+    import pdb
     pdb.post_mortem()

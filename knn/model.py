@@ -12,7 +12,7 @@ class KNN:
         distance = 0
         for fi, sec in zip(first, second):
             distance += (fi - sec)**2
-        return distance**(1/2)
+        return distance**(1 / 2)
 
     def get_k_neighbors(self):
         distances = []

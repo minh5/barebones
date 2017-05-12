@@ -20,7 +20,7 @@ class LDA:
         means = dict()
         for item in self.classes:
             subset = self.x[self.y == item]
-            means[item] = sum(subset)/len(subset)
+            means[item] = sum(subset) / len(subset)
         return means
 
     @property
@@ -28,7 +28,7 @@ class LDA:
         class_prob = dict()
         for item in self.classes:
             subset = self.x[self.y == item]
-            class_prob[item] = sum(subset)/len(subset)
+            class_prob[item] = sum(subset) / len(subset)
         return class_prob
 
     @property
@@ -36,14 +36,15 @@ class LDA:
         squared_diff = []
         for item in self.classes:
             subset = self.x[self.y == item]
-            squared_diff.append(sum([(x - self.class_prob[item])**2 for x in subset]))
-        return 1/(len(self.x) - len(self.classes)) * sum(squared_diff)
+            squared_diff.append(
+                sum([(x - self.class_prob[item])**2 for x in subset]))
+        return 1 / (len(self.x) - len(self.classes)) * sum(squared_diff)
 
     def make_prediction(self, x):
         predicted_value = dict()
         for item in self.classes:
-            value = x * (self.class_mean[item]/self.variance) - \
-                (((self.class_mean[item])**2)/(2*self.variance)) + \
+            value = x * (self.class_mean[item] / self.variance) - \
+                (((self.class_mean[item])**2) / (2 * self.variance)) + \
                 np.log(self.class_mean[item])
             predicted_value[item] = value
             print('predicted value:', predicted_value)
@@ -53,7 +54,7 @@ class LDA:
         return 1 if prediction == observed else 0
 
     def calculate_accuracy(self, list_of_predictions):
-        return sum(list_of_predictions)/len(list_of_predictions)
+        return sum(list_of_predictions) / len(list_of_predictions)
 
     def run(self):
         accuracy_holder = []

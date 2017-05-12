@@ -23,7 +23,7 @@ class GradientDescent:
 
     def calculate_rmse(self, list_of_errors):
         sum_of_errors = sum(list_of_errors)
-        return sum_of_errors/len(list_of_errors)
+        return sum_of_errors / len(list_of_errors)
 
     def run(self):
         pass
@@ -50,7 +50,7 @@ class LinearGradientDescent(GradientDescent):
             error = predicted - observed
             if index == 0:
                 list_of_errors = [error**2]
-            elif index == epoch-1:
+            elif index == epoch - 1:
                 rmse = self.calculate_rmse(list_of_errors)
                 print('CURRENT LINEAR RMSE:', rmse)
             else:
@@ -84,7 +84,7 @@ class MultiVariateGradientDescent(GradientDescent):
                 for i in range(row):
                     coefficients[i] = self.update_coefficients(
                         coefficients[i], self.alpha, error, row[i]
-                        )
+                    )
         return coefficients
 
 
@@ -107,14 +107,14 @@ class LogisticGradientDescent(GradientDescent):
         return 1 if binary == observed else 0
 
     def get_derivative(self, x):
-        return self.get_logistic_function(x)*(1-self.get_logistic_function(x))
+        return self.get_logistic_function(x) * (1 - self.get_logistic_function(x))
 
     def update_coef(self, coef, observed, prediction, x):
         return coef + self.alpha * (observed - prediction) * prediction * (1 - prediction) * x
 
     def calculate_accuracy(self, list_of_values):
         summed = sum(list_of_values)
-        return summed/len(list_of_values)
+        return summed / len(list_of_values)
 
     def run(self):
         epoch = len(self.y)
@@ -122,15 +122,18 @@ class LogisticGradientDescent(GradientDescent):
             index = i % epoch
             set_of_x = [x[index] for x in self.set_of_x]
             observed = self.y[index]
-            logit_value = sum([w * i for w, i in zip(self.set_of_coefficients, set_of_x)])
+            logit_value = sum(
+                [w * i for w, i in zip(self.set_of_coefficients, set_of_x)])
             prediction = self.make_prediction(logit_value)
-            self.set_of_coefficients = [self.update_coef(coef, observed, prediction, x) for coef, x in zip(self.set_of_coefficients, set_of_x)]
+            self.set_of_coefficients = [self.update_coef(
+                coef, observed, prediction, x) for coef, x in zip(self.set_of_coefficients, set_of_x)]
             squared_error = (prediction - observed)**2
-            binary_prediction = self.make_binary_prediction(prediction, observed)
+            binary_prediction = self.make_binary_prediction(
+                prediction, observed)
             if index == 0:
                 list_of_errors = [squared_error]
                 list_of_binary = [binary_prediction]
-            elif index == epoch-1:
+            elif index == epoch - 1:
                 rmse = self.calculate_rmse(list_of_errors)
                 accuracy = self.calculate_accuracy(list_of_binary)
                 print('CURRENT LOGIT RMSE:', rmse)

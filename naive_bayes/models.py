@@ -10,19 +10,19 @@ class NaiveBayes:
 
     @staticmethod
     def mean(x):
-        return sum(x)/len(x)
+        return sum(x) / len(x)
 
     @staticmethod
     def gaussian_dist(x, mean, std_dev):
-        exponent = exp(-((x - mean)**2 / (2*std_dev**2)))
-        return 1/((2*pi)**(1/2) * std_dev) * exponent
+        exponent = exp(-((x - mean)**2 / (2 * std_dev**2)))
+        return 1 / ((2 * pi)**(1 / 2) * std_dev) * exponent
 
     def std_dev(self, x):
         mean = self.mean(x)
         result = []
         for i in x:
             result.append((i - mean)**2)
-        return (sum(result)/(len(result)-1))**(1/2)
+        return (sum(result) / (len(result) - 1))**(1 / 2)
 
     @staticmethod
     def calculate_accuracy(prediction, observed):
@@ -48,7 +48,7 @@ class NaiveBayes:
     def calculate_probs(self, row, summary):
         probs = dict()
         for y, x in summary.items():
-            probs[y] = summary[y][0][2]/self.x_train.shape[0]
+            probs[y] = summary[y][0][2] / self.x_train.shape[0]
             for i in range(len(x)):
                 mean, std_dev, count = x[i]
                 probs[y] *= self.gaussian_dist(row[i], mean, std_dev)
@@ -64,4 +64,5 @@ class NaiveBayes:
             probs = self.calculate_probs(x, summary)
             prediction = self.predict(probs)
             correct_prediction += self.calculate_accuracy(prediction, y)
-            print('current accuracy:', correct_prediction/(self.x_train.shape[0]))
+            print('current accuracy:', correct_prediction /
+                  (self.x_train.shape[0]))

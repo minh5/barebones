@@ -1,6 +1,7 @@
 import random
 from math import exp
 
+
 class NeuralNetwork:
 
     def __init__(
@@ -17,15 +18,15 @@ class NeuralNetwork:
     def initialize_network(self):
         network = dict()
         hidden_layer = [{'weights': [
-             random.random() for i in range(self.x_train.shape[1])
-             ]}
-             for n in range(self.n_hidden_layers)
+            random.random() for i in range(self.x_train.shape[1])
+        ]}
+            for n in range(self.n_hidden_layers)
         ] + [{'bias': random.random()}]
         network['hidden'] = hidden_layer
         output_layer = [{'weights': [
-             random.random() for i in range(self.n_hidden_layers)
-             ]}
-             for n in range(len(set(self.y_train)))
+            random.random() for i in range(self.n_hidden_layers)
+        ]}
+            for n in range(len(set(self.y_train)))
         ] + [{'bias': random.random()}]
         network['output'] = output_layer
         self.network = network
@@ -40,7 +41,7 @@ class NeuralNetwork:
 
     @staticmethod
     def neuron_transfer(activation):
-        return 1/(1 + exp(-activation))
+        return 1 / (1 + exp(-activation))
 
     @staticmethod
     def get_derivative(output):
@@ -55,8 +56,10 @@ class NeuralNetwork:
                     continue
                 else:
                     weights.append(neuron['weights'])
-                    bias = [i for i in network['output'] if 'bias' in i.keys()][0]['bias']
-                    activation = self.activation_function(weights, bias, values)
+                    bias = [i for i in network['output']
+                            if 'bias' in i.keys()][0]['bias']
+                    activation = self.activation_function(
+                        weights, bias, values)
                     neuron['output'] = self.neuron_transfer(activation)
         return network
 
@@ -86,7 +89,8 @@ class NeuralNetwork:
             else:
                 layers.append(layer)
         for layer in layers:
-            layer['error'] = sum([e * l for e, l in zip(row, layer['weights'])])
+            layer['error'] = sum(
+                [e * l for e, l in zip(row, layer['weights'])])
         for h, o in zip(layers, output_layer):
             h['error'] = h['error'] * self.get_derivative(o['output'])
             print('hidden_error:', h['error'])
@@ -98,20 +102,26 @@ class NeuralNetwork:
         return weight + learning_rate * error * value
 
     def update_weights(self, row):
-        output_error = [i['error'] for i in self.network['output'] if 'error' in i.keys()][0]
-        hidden_error = [i['error'] for i in self.network['hidden'] if 'error' in i.keys()][0]
+        output_error = [i['error']
+                        for i in self.network['output'] if 'error' in i.keys()][0]
+        hidden_error = [i['error']
+                        for i in self.network['hidden'] if 'error' in i.keys()][0]
         weights = []
         for o in self.network['output']:
             if 'bias' in o.keys():
-                new_o_bias = self._update_weights(o['bias'], self.learning_rate, output_error, 1)
+                new_o_bias = self._update_weights(
+                    o['bias'], self.learning_rate, output_error, 1)
             else:
                 weights.append(o['weights'])
-        new_o_weights = [self._update_weights(w[0], self.learning_rate, output_error, i) for w, i in zip(weights, row)]
+        new_o_weights = [self._update_weights(
+            w[0], self.learning_rate, output_error, i) for w, i in zip(weights, row)]
         for h in self.network['hidden']:
             if 'bias' in h.keys():
-                new_h_bias = self._update_weights(h['bias'], self.learning_rate, hidden_error, 1)
+                new_h_bias = self._update_weights(
+                    h['bias'], self.learning_rate, hidden_error, 1)
             else:
-                new_h_weights = [self._update_weights(w, self.learning_rate, hidden_error, i) for w, i in zip(h['weights'], row)]
+                new_h_weights = [self._update_weights(
+                    w, self.learning_rate, hidden_error, i) for w, i in zip(h['weights'], row)]
         new_network, new_network['hidden'], new_network['output'] = {}, [], []
         new_network['hidden'].append({'bias': new_h_bias})
         new_network['hidden'].append({'weights': new_h_weights})

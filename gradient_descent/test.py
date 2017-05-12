@@ -1,5 +1,3 @@
-import pdb
-
 import numpy as np
 
 from models import LinearGradientDescent, LogisticGradientDescent

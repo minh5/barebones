@@ -90,13 +90,73 @@ class Cart:
             else:
                 return node['right']
 
-    def run(self):
+    def create_tree(self):
         root = self.determine_best_split(self.x, self.y)
         tree = self.create_nodes(root, 1)
         return tree
 
+
 class BaggedCart(Cart):
-    pass
+
+    def __init__(self, sample_ratio, n_trees, bootstrap=True):
+        self.sample_ratio = sample_ratio
+        self.n_trees = n_trees
+        self.bootstrap = boostrap
+
+    def sample_x(self):
+        indx = np.random.choice(
+            self.x.shape[0],
+            size=self.x_train.shape[0] * self.sample_ratio,
+            replace=self.boostrap
+        )
+        self.x = self.x[indx]
+
+    def run(self):
+        self.trees = []
+        for n in range(self.n_trees):
+            train_set = self.sample_x()
+            tree = self.create_tree()
+            self.trees.append(tree)
+
+    def predict_bagged_trees(self, input_value):
+        scores = []
+        for tree in self.trees:
+            scores.append(self.predict(tree, input_value))
+        return max(set(scores), key=scores.count)
 
 
-class RandomForest(Cart)
+class RandomForest(Cart):
+
+    def __init__(self, n_features='auto', bootstrap, sample_ratio):
+        self.n_features = n_features
+        self.boostrap = boostrap
+        self.sample_ratio = self.sample_ratio
+
+    def sample_x(self):
+        if self.n_features == 'auto':
+            n_features = round(self.x_train.shape[1]**(1/2))
+        else:
+            n_features = self.n_features
+        indx = np.random.choice(
+            self.x.shape[0],
+            size=self.x_train.shape[0] * self.sample_ratio,
+            replace=self.boostrap
+        )
+        row_sampled = self.x[indx]
+        sampled_df = []
+        for row in row_sampled:
+            sampled_df.append(random.sample(row.tolist(), n_features))
+        self.x = np.array(sample_df)
+
+    def run(self):
+        self.trees = []
+        for n in range(self.n_trees):
+            train_set = self.sample_x()
+            tree = self.create_tree()
+            self.trees.append(tree)
+
+    def predict_random_forest(self, input_value):
+        scores = []
+        for tree in self.trees:
+            scores.append(self.predict(tree, input_value))
+        return max(set(scores), key=scores.count)

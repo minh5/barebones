@@ -15,11 +15,14 @@ x = np.array([
     [7.673756466, 3.508563011]
  ])
 y = np.array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
-test = NeuralNetwork(x, y)
-output = test.forward_propogation([1, 0])
-print(output)
+test = NeuralNetwork(x, y, [1, 0])
+# test.run()
 
-
+try:
+    test.run()
+except:
+    import ipdb
+    ipdb.post_mortem()
 # just for reference
 # {'hidden': [{'weights': [0.5141451578929849, 0.47556682045282594]}, {'bias': 0.9113927260400715}],
 # 'output': [{'weights': [0.6873698659767088]}, {'weights': [0.08164677002411613]}, {'bias': 0.5602075959991232}]}

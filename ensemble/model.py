@@ -1,3 +1,5 @@
+from math import log, exp
+
 import numpy as np
 
 
@@ -160,3 +162,68 @@ class RandomForest(Cart):
         for tree in self.trees:
             scores.append(self.predict(tree, input_value))
         return max(set(scores), key=scores.count)
+
+    def AdaBoost(Cart):
+
+        def __init__(self):
+            self.tree_depth = 1
+
+
+class AdaBoost(BaggedCart):
+
+    def __init__(self):
+        self.tree_depth = 1
+        self.n_learners = 3
+        self.weights = self.initialize_weights()
+        self.stage = 1
+
+    def initialize_weights(self):
+        return [1/len(self.y) for i in len(self.y)]
+
+    @staticmethod
+    def calculate_stage(error):
+        return log((1-error)/error)
+
+    @staticmethod
+    def update_weights(weight, stage):
+        return weight * exp(stage * weight)
+
+    def create_weak_learners(self):
+        self.run()  # create weak learners through shallow trees
+
+    def update_stages(self, tree, weights, stage_value):
+        predictions, weighted_errors = [], []
+        for row in self.x:
+            predictions.append(self.predict(tree, row))
+        for i in range(len(predictions)):
+            if predictions[i] == self.y[i]:
+                weighted_errors.append(0)
+            else:
+                new_weights = self.update_weights(weights[i], stage_value)
+                weighted_errors.append(new_weights)
+        self.stage = self.calculate_stage(sum(weighted_errors)/len(self.y))
+        self.weights = new_weights
+
+    @staticmethod
+    def _predict_adaboost(tree, row, stage):
+        predictions = self.predict(tree, row)
+        if prediction == 1:
+            return stage * 1
+        else:
+            return stage * -1
+
+    def predict_adaboost(self, row):
+        ensembles = []
+        for tree in self.trees:
+            predict = self._predict_adaboost(tree, row, self.stage)
+            ensembles.append(predict)
+        if sum(ensembles) > 0:
+            return 1
+        else:
+            return 0
+
+    def run(self, predict_row=None):
+        all_trees = []
+        self.create_weak_learners()
+        for tree in self.trees:
+            self.update_stages(tree, self.weights, self.stage)

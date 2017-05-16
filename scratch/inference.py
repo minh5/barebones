@@ -50,3 +50,7 @@ def beta_pdf(x, alpha, beta):
         return 0
     else:
         return x ** (alpha - 1) * (1 - x) ** (beta - 1) / B(alpha, beta)
+
+
+def calculate_z_score(x):
+    return [i - prob.mean(i)/prob.std_dev(i) for i in x]
